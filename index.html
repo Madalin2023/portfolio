@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio</title>
+  <meta name="description" content="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!--
+    STRUTTURA SOLTANTO. Tutti i testi vivono in data/content.json.
+    Vedi CLAUDE.md prima di modificare questo file.
+  -->
+  <header class="topbar">
+    <a class="logo" href="#home" aria-label="Home"></a>
+    <nav class="pillnav" id="nav" aria-label="Navigazione principale"></nav>
+    <ul class="socials" id="socials"></ul>
+  </header>
+
+  <main id="app">
+    <section class="hero section" id="home" data-section="home">
+      <canvas class="sketch" id="sketch" aria-hidden="true"></canvas>
+      <div class="hero-inner">
+        <svg class="hero-name" id="heroName" role="img" aria-labelledby="heroNameTitle">
+          <title id="heroNameTitle"></title>
+          <defs>
+            <!-- linea "tremolante" tipo matita -->
+            <filter id="pencil" x="-5%" y="-10%" width="110%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="1" seed="4" result="n"/>
+              <feGaussianBlur in="n" stdDeviation="3" result="ns"/>
+              <feDisplacementMap in="SourceGraphic" in2="ns" scale="14" xChannelSelector="R" yChannelSelector="G" result="d"/>
+              <feGaussianBlur in="d" stdDeviation="0.9" result="db"/>
+              <feComponentTransfer in="db"><feFuncA type="linear" slope="1.8"/></feComponentTransfer>
+            </filter>
+          </defs>
+          <g class="hero-dots" id="heroDots"></g>
+          <text id="heroNameText" x="0" y="0"></text>
+        </svg>
+        <div class="tagline" id="tagline"></div>
+      </div>
+      <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+    </section>
+
+    <div id="sections"></div>
+  </main>
+
+  <aside class="figindex" id="figindex" aria-label="Indice sezioni"></aside>
+  <footer class="footer" id="footer"></footer>
+
+  <div class="load-error" id="loadError" hidden>
+    data/content.json non caricato. Avvia un server locale (es. <code>python -m http.server</code>) e apri http://localhost:8000
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    /* ---------- helpers ---------- */
+    const $ = (sel) => document.querySelector(sel);
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text !== undefined && text !== null) n.textContent = text;
+      return n;
+    };
+    const svgEl = (tag, attrs = {}) => {
+      const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+      return n;
+    };
+    const isExternal = (href) => /^https?:\/\//.test(href || '');
+    const link = (href, cls, text) => {
+      const a = el('a', cls, text);
+      a.href = href || '#';
+      if (isExternal(href)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+      return a;
+    };
+    const titleNode = (tag, cls, title, faded) => {
+      const h = el(tag, cls);
+      h.append(document.createTextNode(title || ''));
+      if (faded) h.append(el('span', 'faded', faded));
+      return h;
+    };
+
+    /* ---------- figure renderers (one per "type" in content.json) ---------- */
+    const chrome = (label) => {
+      const bar = el('div', 'chrome');
+      bar.append(el('i'), el('i'), el('i'));
+      if (label) bar.append(el('span', 'chrome-url', label));
+      return bar;
+    };
+
+    const renderers = {
+      window(f) {
+        const card = el('div', 'card card-window');
+        card.append(chrome(f.url));
+        const body = el('div', 'card-body');
+        if (f.eyebrow) body.append(el('p', 'eyebrow', f.eyebrow));
+        body.append(el('h3', 'card-title', f.title));
+        if (f.subtitle) body.append(el('p', 'card-sub', f.subtitle));
+        if (f.body) body.append(el('p', 'card-text', f.body));
+        if (Array.isArray(f.meta) && f.meta.length) {
+          const dl = el('dl', 'meta');
+          f.meta.forEach((m) => { const d = el('div'); d.append(el('dt', '', m.label), el('dd', '', m.value)); dl.append(d); });
+          body.append(dl);
+        }
+        card.append(body);
+        return card;
+      },
+      stat(f) {
+        const card = el('div', 'card card-stat');
+        card.append(el('div', 'stat-value', f.value), el('div', 'stat-label', f.label));
+        if (f.note) card.append(el('div', 'stat-note', f.note));
+        return card;
+      },
+      checklist(f) {
+        const card = el('div', 'card card-check');
+        if (f.title) card.append(el('p', 'eyebrow', f.title));
+        const ul = el('ul', 'checklist');
+        (f.items || []).forEach((it) => {
+          const li = el('li', it.checked ? 'is-checked' : '');
+          li.append(el('span', 'box'), el('span', 'txt', it.text));
+          li.addEventListener('click', () => li.classList.toggle('is-checked'));
+          ul.append(li);
+        });
+        card.append(ul);
+        return card;
+      },
+      ticket(f) {
+        const card = el('div', 'card card-ticket');
+        const head = el('div', 'ticket-head');
+        head.append(el('span', 'ticket-key', f.key), el('span', 'ticket-status', f.status));
+        card.append(head, el('h3', 'card-title', f.title));
+        if (f.tags) { const t = el('div', 'chips'); f.tags.forEach((x) => t.append(el('span', 'chip', x))); card.append(t); }
+        if (f.footer) card.append(el('p', 'ticket-foot', f.footer));
+        return card;
+      },
+      terminal(f) {
+        const card = el('div', 'card card-term');
+        card.append(chrome(f.title));
+        const pre = el('div', 'term-body');
+        (f.lines || []).forEach((l, i) => {
+          const line = el('div', 'term-line tone-' + (l.tone || 'dim'), l.text);
+          line.style.setProperty('--i', i);
+          pre.append(line);
+        });
+        card.append(pre);
+        return card;
+      },
+      project(f) {
+        const card = el('div', 'card card-project');
+        if (f.eyebrow) card.append(el('p', 'eyebrow', f.eyebrow));
+        card.append(el('h3', 'card-title', f.title));
+        if (f.body) card.append(el('p', 'card-text', f.body));
+        if (f.tags) { const t = el('div', 'chips'); f.tags.forEach((x) => t.append(el('span', 'chip', x))); card.append(t); }
+        if (f.link) card.append(link(f.link.href, 'card-link', f.link.label));
+        return card;
+      },
+      report(f) {
+        const card = el('div', 'card card-report');
+        if (f.title) card.append(el('p', 'eyebrow', f.title));
+        (f.rows || []).forEach((r) => {
+          const row = el('div', 'report-row');
+          row.append(el('span', '', r.label), el('span', 'status status-' + (r.status || 'ok')));
+          card.append(row);
+        });
+        return card;
+      },
+      skill(f) {
+        const card = el('div', 'card card-skill');
+        card.append(el('div', 'skill-initial', (f.name || '?').trim().charAt(0)));
+        const txt = el('div', 'skill-txt');
+        txt.append(el('h3', 'skill-name', f.name));
+        if (f.category) txt.append(el('p', 'skill-cat', f.category));
+        card.append(txt);
+        if (typeof f.level === 'number') {
+          const bar = el('div', 'skill-bar');
+          const fill = el('span');
+          fill.style.setProperty('--lvl', Math.max(0, Math.min(100, f.level)) + '%');
+          bar.append(fill);
+          card.append(bar);
+        }
+        return card;
+      }
+    };
+
+    /* ---------- page sections ---------- */
+    function renderTop(c) {
+      document.documentElement.lang = c.meta?.lang || 'it';
+      document.title = c.meta?.title || c.hero?.name || '';
+      $('meta[name="description"]').setAttribute('content', c.meta?.description || '');
+
+      const nav = $('#nav');
+      (c.nav || []).forEach((n) => {
+        const a = link(n.href, 'pill', n.label);
+        a.dataset.covers = (n.covers || []).join(' ');
+        nav.append(a);
+      });
+
+      const soc = $('#socials');
+      (c.socials || []).forEach((s) => { const li = el('li'); li.append(link(s.url, '', s.label)); soc.append(li); });
+
+      $('.logo').textContent = c.hero?.name || '';
+      $('#footer').textContent = c.footer?.text || '';
+    }
+
+    function renderHero(c) {
+      const h = c.hero || {};
+      $('#heroNameTitle').textContent = h.name || '';
+      const nameText = $('#heroNameText');
+      nameText.textContent = h.name || '';
+      // lettere leggermente ruotate e sfalsate, come scritte a mano
+      let sd = 11;
+      const jit = () => (sd = (sd * 9301 + 49297) % 233280) / 233280 - 0.5;
+      const chars = [...(h.name || '')];
+      nameText.setAttribute('rotate', chars.map(() => (jit() * 14).toFixed(1)).join(' '));
+      let prevY = 0;
+      nameText.setAttribute('dy', chars.map(() => { const y = jit() * 18; const d = y - prevY; prevY = y; return d.toFixed(1); }).join(' '));
+
+      const tl = $('#tagline');
+      if (h.bubble) {
+        const b = el('div', 'bubble');
+        b.append(el('span', '', h.bubble));
+        const x = el('button', 'bubble-x', '×');
+        x.type = 'button';
+        x.setAttribute('aria-label', 'Chiudi');
+        x.addEventListener('click', () => b.classList.add('is-gone'));
+        b.append(x);
+        tl.append(b);
+      }
+      const tags = el('div', 'tags');
+      (h.tags || []).forEach((t) => tags.append(el('span', 'tag tag-' + (t.tone || 'muted'), t.text)));
+      tl.append(tags);
+
+      const mq = $('#marquee');
+      const hint = c.ui?.scrollHint || '';
+      for (let i = 0; i < 8; i++) mq.append(el('span', '', hint));
+    }
+
+    function fitHeroName() {
+      const svg = $('#heroName');
+      const text = $('#heroNameText');
+      const bb = text.getBBox();
+      if (!bb.width) return;
+      const pad = 24;
+      svg.setAttribute('viewBox', `${bb.x - pad} ${bb.y - pad} ${bb.width + pad * 2} ${bb.height + pad * 2}`);
+
+      // small numbered "construction" dots scattered over the name
+      const g = $('#heroDots');
+      g.replaceChildren();
+      let seed = 7;
+      const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+      for (let i = 1; i <= 12; i++) {
+        const x = bb.x + bb.width * (0.04 + rnd() * 0.92);
+        const y = bb.y + bb.height * (0.25 + rnd() * 0.55);
+        const dot = svgEl('g', { class: 'dot', style: `--d:${i}` });
+        dot.append(svgEl('circle', { cx: x, cy: y, r: 2.6 }));
+        const lbl = svgEl('text', { x: x - 6, y: y - 7, 'text-anchor': 'end' });
+        lbl.textContent = i;
+        dot.append(lbl);
+        g.append(dot);
+      }
+      svg.classList.add('is-ready');
+    }
+
+    function renderSections(c) {
+      const root = $('#sections');
+      const prefix = c.ui?.figPrefix || 'FIG.';
+      const index = [];
+      let fig = 1;
+
+      (c.sections || []).forEach((s) => {
+        const sec = el('section', 'section work layout-' + (s.layout || 'scatter'));
+        sec.id = s.id;
+        sec.dataset.section = s.id;
+
+        const stage = el('div', 'stage');
+        const start = fig;
+        (s.figures || []).forEach((f) => {
+          const render = renderers[f.type];
+          if (!render) { console.warn('Tipo di figura sconosciuto:', f.type); return; }
+          const wrap = el('figure', 'fig fig-' + f.type);
+          wrap.append(el('figcaption', 'fig-label', `${prefix} ${fig}`), render(f));
+          stage.append(wrap);
+          fig++;
+        });
+
+        if (s.cta) {
+          const cta = link(s.cta.href, 'cta cta-' + (s.cta.tone || 'violet'));
+          cta.append(el('span', '', s.cta.label), el('span', 'plus', '+'));
+          stage.append(cta);
+        }
+        sec.append(stage);
+        // titolo fisso al centro del viewport per tutta la durata della sezione
+        const track = el('div', 'title-track');
+        track.append(titleNode('h2', 'section-title', s.title, s.titleFaded));
+        sec.append(track);
+        root.append(sec);
+
+        index.push({ id: s.id, range: fig - 1 > start ? `${prefix} ${start}-${fig - 1}` : `${prefix} ${start}`, label: s.indexLabel || s.title });
+      });
+
+      const ct = c.contact;
+      if (ct) {
+        const sec = el('section', 'section contact');
+        sec.id = ct.id;
+        sec.dataset.section = ct.id;
+        const inner = el('div', 'contact-inner');
+        inner.append(titleNode('h2', 'contact-title', ct.title, ct.titleFaded));
+        if (ct.text) inner.append(el('p', 'contact-text', ct.text));
+        if (ct.email) {
+          const cta = link('mailto:' + ct.email, 'cta cta-violet');
+          cta.append(el('span', '', ct.cta || ct.email), el('span', 'plus', '+'));
+          inner.append(cta, link('mailto:' + ct.email, 'contact-mail', ct.email));
+        }
+        const soc = el('ul', 'contact-links');
+        (c.socials || []).forEach((s) => { const li = el('li'); li.append(link(s.url, '', s.label + ' ↗')); soc.append(li); });
+        inner.append(soc);
+        sec.append(inner);
+        root.append(sec);
+        index.push({ id: ct.id, range: '—', label: ct.indexLabel || ct.title });
+      }
+
+      const fi = $('#figindex');
+      index.forEach((it) => {
+        const a = link('#' + it.id, 'fi-item');
+        a.dataset.target = it.id;
+        a.append(el('span', 'fi-range', it.range), el('span', 'fi-label', it.label));
+        fi.append(a);
+      });
+    }
+
+    /* ---------- interactions ---------- */
+    function setupObservers() {
+      const navLinks = [...document.querySelectorAll('#nav .pill')];
+      const fiLinks = [...document.querySelectorAll('#figindex .fi-item')];
+      const topbar = $('.topbar');
+      const fi = $('#figindex');
+
+      // luminosità dello sfondo legata allo scroll:
+      // schiarisce linearmente mentre l'header esce, torna scuro mentre arrivano contatti/footer
+      const hero = $('#home');
+      const contact = document.querySelector('.section.contact');
+      const clamp01 = (v) => Math.max(0, Math.min(1, v));
+      let ticking = false;
+      const updateLight = () => {
+        ticking = false;
+        const vh = window.innerHeight;
+        const up = clamp01(window.scrollY / Math.max(1, hero.offsetHeight * 0.8));
+        const down = contact ? clamp01((vh - contact.getBoundingClientRect().top) / vh) : 0;
+        document.body.style.setProperty('--light', (up * (1 - down)).toFixed(3));
+
+        // titoli di sezione: attivi solo mentre la sezione occupa il centro dello schermo
+        // (fascia neutra 40%–60%: il titolo uscente sparisce prima che entri il successivo)
+        titles.forEach(({ sec, layers }) => {
+          const r = sec.getBoundingClientRect();
+          const on = r.top < vh * 0.4 && r.bottom > vh * 0.6;
+          if (on === layers[0].classList.contains('is-on')) return;
+          layers.forEach((t) => { t.classList.toggle('is-on', on); t.classList.toggle('is-out', !on); });
+        });
+      };
+      // spezza ogni titolo in lettere animabili singolarmente (il testo intero resta in aria-label)
+      const titles = [...document.querySelectorAll('.section.work')].map((sec) => {
+        const title = sec.querySelector('.section-title');
+        if (!title) return null;
+        title.setAttribute('aria-label', title.textContent);
+        let i = 0;
+        const split = (node) => {
+          [...node.childNodes].forEach((n) => {
+            if (n.nodeType === 3) {
+              const frag = document.createDocumentFragment();
+              [...n.textContent].forEach((ch) => {
+                const s = el('span', 'ch', ch === ' ' ? ' ' : ch);
+                s.setAttribute('aria-hidden', 'true');
+                s.style.setProperty('--i', i++);
+                frag.append(s);
+              });
+              n.replaceWith(frag);
+            } else split(n);
+          });
+        };
+        split(title);
+        title.style.setProperty('--n', i);
+        return { sec, layers: [title] };
+      }).filter(Boolean);
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(updateLight); } };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      updateLight();
+
+      const setActive = (id) => {
+        navLinks.forEach((a) => a.classList.toggle('is-active', a.dataset.covers.split(' ').includes(id)));
+        fiLinks.forEach((a) => a.classList.toggle('is-active', a.dataset.target === id));
+        topbar.classList.toggle('is-scrolled', id !== 'home');
+        fi.classList.toggle('is-visible', id !== 'home');
+      };
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.dataset.section); });
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      document.querySelectorAll('[data-section]').forEach((s) => io.observe(s));
+
+      const reveal = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); reveal.unobserve(e.target); } });
+      }, { threshold: 0.15 });
+      document.querySelectorAll('.fig, .contact-inner, .cta').forEach((n) => reveal.observe(n));
+
+      setActive('home');
+    }
+
+    /* subtle 3D tilt following the pointer */
+    function setupTilt() {
+      if (!window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) return;
+      document.querySelectorAll('.fig .card').forEach((card) => {
+        card.addEventListener('pointermove', (e) => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          card.style.setProperty('--rx', (-y * 6).toFixed(2) + 'deg');
+          card.style.setProperty('--ry', (x * 6).toFixed(2) + 'deg');
+        });
+        card.addEventListener('pointerleave', () => { card.style.removeProperty('--rx'); card.style.removeProperty('--ry'); });
+      });
+    }
+
+    /* matita: disegno libero sull'header (mouse / penna) */
+    function setupSketch() {
+      const hero = $('#home');
+      const cv = $('#sketch');
+      const ctx = cv.getContext('2d');
+      const strokes = [];
+      let current = null;
+
+      const style = () => {
+        ctx.strokeStyle = getComputedStyle(hero).getPropertyValue('--sketch-ink').trim() || '#f3f4f5';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      };
+      const drawStroke = (pts) => {
+        if (!pts.length) return;
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        if (pts.length === 1) ctx.lineTo(pts[0].x + 0.1, pts[0].y);
+        for (let i = 1; i < pts.length - 1; i++) {
+          ctx.quadraticCurveTo(pts[i].x, pts[i].y, (pts[i].x + pts[i + 1].x) / 2, (pts[i].y + pts[i + 1].y) / 2);
+        }
+        if (pts.length > 1) ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+        ctx.stroke();
+      };
+      const resize = () => {
+        const dpr = window.devicePixelRatio || 1;
+        cv.width = Math.round(hero.clientWidth * dpr);
+        cv.height = Math.round(hero.clientHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        style();
+        strokes.forEach(drawStroke);
+      };
+      const point = (e) => { const b = cv.getBoundingClientRect(); return { x: e.clientX - b.left, y: e.clientY - b.top }; };
+
+      hero.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0 || e.pointerType === 'touch' || e.target.closest('a, button')) return;
+        e.preventDefault();
+        current = [point(e)];
+        strokes.push(current);
+        hero.setPointerCapture(e.pointerId);
+        drawStroke(current);
+      });
+      hero.addEventListener('pointermove', (e) => {
+        if (!current) return;
+        const p = point(e);
+        const last = current[current.length - 1];
+        if (Math.hypot(p.x - last.x, p.y - last.y) < 1.5) return;
+        current.push(p);
+        const n = current.length;
+        const a = current[Math.max(0, n - 3)], b = current[n - 2], c = current[n - 1];
+        ctx.beginPath();
+        ctx.moveTo((a.x + b.x) / 2, (a.y + b.y) / 2);
+        ctx.quadraticCurveTo(b.x, b.y, (b.x + c.x) / 2, (b.y + c.y) / 2);
+        ctx.stroke();
+      });
+      const end = () => { current = null; };
+      hero.addEventListener('pointerup', end);
+      hero.addEventListener('pointercancel', end);
+
+      resize();
+      window.addEventListener('resize', resize);
+    }
+
+    /* ---------- boot ---------- */
+    fetch('./data/content.json', { cache: 'no-cache' })
+      .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then((content) => {
+        renderTop(content);
+        renderHero(content);
+        renderSections(content);
+        setupObservers();
+        setupTilt();
+        setupSketch();
+        (document.fonts ? document.fonts.ready : Promise.resolve()).then(fitHeroName);
+        window.addEventListener('resize', fitHeroName);
+        document.body.classList.add('is-loaded');
+      })
+      .catch((err) => {
+        console.error('Impossibile caricare data/content.json:', err);
+        $('#loadError').hidden = false;
+      });
+  })();
+  </script>
+</body>
+</html>

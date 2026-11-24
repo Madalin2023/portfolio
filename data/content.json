@@ -1,0 +1,248 @@
+{
+  "meta": {
+    "lang": "it",
+    "title": "Madalin Luciu — WebOps & Backend Developer",
+    "description": "Portfolio di Madalin Luciu, WebOps & Backend Developer: Adobe Experience Manager, JavaScript, PHP e Laravel, siti multi-brand e automazione."
+  },
+
+  "ui": {
+    "figPrefix": "FIG.",
+    "scrollHint": "Scroll per scoprire",
+    "openLabel": "Apri",
+    "backToTop": "Torna su"
+  },
+
+  "nav": [
+    { "label": "Home", "href": "#home", "covers": ["home"] },
+    { "label": "Lavori", "href": "#esperienza", "covers": ["esperienza", "percorso", "progetti", "competenze"] },
+    { "label": "Formazione", "href": "#formazione", "covers": ["formazione"] },
+    { "label": "Contatti", "href": "#contatti", "covers": ["contatti"] }
+  ],
+
+  "socials": [
+    { "label": "GitHub", "url": "https://github.com/" },
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/" }
+  ],
+
+  "hero": {
+    "name": "Madalin Luciu",
+    "bubble": "Ciao! :)",
+    "tags": [
+      { "text": "WebOps", "tone": "accent" },
+      { "text": "&", "tone": "dark" },
+      { "text": "Backend", "tone": "muted" },
+      { "text": "Developer", "tone": "muted" }
+    ]
+  },
+
+  "sections": [
+    {
+      "id": "esperienza",
+      "indexLabel": "Esperienza",
+      "title": "Web",
+      "titleFaded": "Ops",
+      "layout": "scatter",
+      "cta": { "label": "Parliamone", "href": "#contatti", "tone": "violet" },
+      "figures": [
+        {
+          "type": "window",
+          "url": "stellantis.com / webops",
+          "eyebrow": "Ruolo principale · 2022 – presente",
+          "title": "WebOps Developer",
+          "subtitle": "Stellantis",
+          "body": "Gestisco le pagine web di oltre 10 brand automotive europei con il CMS Adobe Experience Manager: creazione e aggiornamento delle pagine e back office completo (servizi, collegamenti e risorse). Realizzo siti interi a partire dai progetti Figma e brief grafici coordinandomi con i team durante ogni parte del processo.",
+          "meta": [
+            { "label": "Periodo", "value": "2022 – presente" },
+            { "label": "Sede", "value": "Milano" },
+            { "label": "Stack", "value": "AEM · JavaScript · Jira · Figma" }
+          ]
+        },
+        {
+          "type": "stat",
+          "value": "10+",
+          "label": "brand automotive europei",
+          "note": "gestiti in AEM"
+        },
+        {
+          "type": "checklist",
+          "title": "Cosa faccio ogni giorno",
+          "items": [
+            { "text": "Pagine web e back office completo in Adobe Experience Manager", "checked": true },
+            { "text": "Debugging di chiamate JavaScript e Quality Check dei servizi", "checked": true },
+            { "text": "Flusso di lavoro su Jira: compiti, priorità e metodologie decisi con il team", "checked": true },
+            { "text": "Creazione di siti Web partendo da master", "checked": true },
+            { "text": "Ambienti di sviluppo per preview, test e staging prima di andare in produzione", "checked": true }
+          ]
+        },
+        {
+          "type": "ticket",
+          "key": "WEBOPS",
+          "title": "Pubblicazione e manutenzione pagine brand",
+          "status": "Done",
+          "tags": ["AEM", "Jira", "Figma", "Multi-brand"],
+          "footer": "Flusso: richiesta su Jira → sviluppo in AEM → preview → test → go-live"
+        }
+      ]
+    },
+    {
+      "id": "percorso",
+      "indexLabel": "Percorso",
+      "title": "Per",
+      "titleFaded": "corso",
+      "layout": "scatter",
+      "figures": [
+        {
+          "type": "window",
+          "url": "Vassallo Computer · Rivanazzano Terme",
+          "eyebrow": "feb 2019 – giu 2019",
+          "title": "Tecnico informatico",
+          "subtitle": "Vassallo Computer",
+          "body": "Riparazione e sostituzione di PC fissi e portatili; riparazione di smartphone e tablet (batteria e schermo); installazione di sistemi operativi Windows; diagnostica di PC e telefoni con scansione e pulizia dei virus; attivazione di reti fisse, SIM e contratti con operatori telefonici.",
+          "meta": [
+            { "label": "Periodo", "value": "feb – giu 2019" },
+            { "label": "Luogo", "value": "Rivanazzano Terme" }
+          ]
+        },
+        {
+          "type": "window",
+          "url": "Mietta Impianti · Voghera",
+          "eyebrow": "feb 2018 – giu 2018",
+          "title": "Elettricista",
+          "subtitle": "Mietta Impianti",
+          "body": "Installazione di antifurti domestici; impianti elettrici in nuove abitazioni realizzati da zero, dalla pianificazione alla tiratura dei cavi; sistemi di condizionamento per case e uffici; automazione di cancelli e cancelletti tramite sensori.",
+          "meta": [
+            { "label": "Periodo", "value": "feb – giu 2018" },
+            { "label": "Luogo", "value": "Voghera" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "formazione",
+      "indexLabel": "Formazione",
+      "title": "Forma",
+      "titleFaded": "zione",
+      "layout": "scatter",
+      "figures": [
+        {
+          "type": "project",
+          "eyebrow": "In corso · Harvard University",
+          "title": "CS50P — Introduction to Programming with Python",
+          "body": "Il corso di Harvard sulla programmazione in Python: funzioni, condizioni, cicli, eccezioni, librerie, test unitari, file I/O, espressioni regolari e programmazione a oggetti.",
+          "tags": ["Python", "CS50P", "Harvard"],
+          "link": { "label": "Il corso", "href": "https://cs50.harvard.edu/python/" }
+        },
+        {
+          "type": "project",
+          "eyebrow": "Bootcamp · set 2021 – dic 2021",
+          "title": "Sviluppatore web full stack — Aulab",
+          "body": "Bootcamp di tre mesi su sviluppo web full stack: Laravel, Bootstrap, Vue.js, JavaScript, PHP, HTML e CSS, con utilizzo di MySQL.",
+          "tags": ["Laravel", "Bootstrap", "Vue.js", "JavaScript", "PHP", "HTML", "CSS", "MySQL"]
+        },
+        {
+          "type": "checklist",
+          "title": "Certificati",
+          "items": [
+            { "text": "Certificato Aulab Hackademy — dic 2021", "checked": true },
+            { "text": "Certificato PLC — giu 2019", "checked": true }
+          ]
+        },
+        {
+          "type": "window",
+          "url": "ITIS Maserati · Voghera",
+          "eyebrow": "set 2015 – giu 2020",
+          "title": "Diploma ITIS",
+          "subtitle": "ITIS Maserati, Voghera",
+          "body": "Diploma di istituto tecnico industriale, indirizzo Elettronica ed Elettrotecnica.",
+          "meta": [
+            { "label": "Periodo", "value": "2015 – 2020" },
+            { "label": "Indirizzo", "value": "Elettronica ed Elettrotecnica" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "progetti",
+      "indexLabel": "Progetti",
+      "title": "Web",
+      "titleFaded": "QA",
+      "layout": "scatter",
+      "cta": { "label": "Vedi GitHub", "href": "https://github.com/", "tone": "cyan" },
+      "figures": [
+        {
+          "type": "terminal",
+          "title": "web-qa — python",
+          "lines": [
+            { "text": "$ python qa_check.py --site brand-pages", "tone": "cmd" },
+            { "text": "→ avvio browser Playwright (chromium)", "tone": "dim" },
+            { "text": "→ parsing HTML con BeautifulSoup", "tone": "dim" },
+            { "text": "✔ link verificati", "tone": "ok" },
+            { "text": "✔ meta tag e titoli presenti", "tone": "ok" },
+            { "text": "! immagini senza attributo alt", "tone": "warn" },
+            { "text": "report salvato in ./reports", "tone": "dim" }
+          ]
+        },
+        {
+          "type": "project",
+          "eyebrow": "Tool Python",
+          "title": "Web QA automatico",
+          "body": "Strumenti Python per il controllo qualità automatico delle pagine web: navigazione con Playwright, analisi del markup con BeautifulSoup e report degli errori trovati.",
+          "tags": ["Python", "Playwright", "BeautifulSoup"]
+        },
+        {
+          "type": "report",
+          "title": "Esempio di report QA",
+          "rows": [
+            { "label": "Link interrotti", "status": "ok" },
+            { "label": "Meta description", "status": "ok" },
+            { "label": "Attributi alt", "status": "warn" },
+            { "label": "Errori console", "status": "ok" }
+          ]
+        },
+        {
+          "type": "project",
+          "eyebrow": "Scripting",
+          "title": "Automazione workflow",
+          "body": "Script per automatizzare attività ripetitive e rendere più veloci i flussi di lavoro quotidiani.",
+          "tags": ["Python", "Bash", "Linux"]
+        }
+      ]
+    },
+    {
+      "id": "competenze",
+      "indexLabel": "Competenze",
+      "title": "Tool",
+      "titleFaded": "kit",
+      "layout": "cluster",
+      "figures": [
+        { "type": "skill", "name": "Adobe Experience Manager", "category": "CMS · Ottimo", "level": 90 },
+        { "type": "skill", "name": "Jira", "category": "Gestione progetti · Ottimo", "level": 90 },
+        { "type": "skill", "name": "HTML + CSS", "category": "Frontend · Ottimo", "level": 90 },
+        { "type": "skill", "name": "Bootstrap", "category": "Framework CSS · Ottimo", "level": 90 },
+        { "type": "skill", "name": "JavaScript", "category": "Frontend · Molto buono", "level": 80 },
+        { "type": "skill", "name": "PHP", "category": "Backend · Molto buono", "level": 80 },
+        { "type": "skill", "name": "Laravel", "category": "Framework PHP · Molto buono", "level": 80 },
+        { "type": "skill", "name": "Gestione database", "category": "MySQL · Buono", "level": 65 },
+        { "type": "skill", "name": "Python", "category": "Scripting · in crescita con CS50P", "level": 55 },
+        { "type": "skill", "name": "React", "category": "Frontend · Base", "level": 40 },
+        { "type": "skill", "name": "Java", "category": "Programmazione · Base", "level": 40 },
+        { "type": "skill", "name": "Programmazione in C", "category": "Programmazione · Base", "level": 40 },
+        { "type": "skill", "name": "Arduino", "category": "Elettronica · Base", "level": 40 }
+      ]
+    }
+  ],
+
+  "contact": {
+    "id": "contatti",
+    "indexLabel": "Contatti",
+    "title": "Parliamo",
+    "titleFaded": ".",
+    "text": "Ti serve un sito per la tua attività? Lavoro da remoto da Voghera (PV): scrivimi.",
+    "email": "madalin2023@gmail.com",
+    "cta": "Scrivimi"
+  },
+
+  "footer": {
+    "text": "© 2026 Madalin Luciu — WebOps & Backend Developer"
+  }
+}
