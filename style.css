@@ -570,7 +570,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 /* ---------- fixed figure index ---------- */
 .figindex {
   position: fixed; left: var(--gutter); bottom: 28px; z-index: 40;
-  display: grid; gap: 6px;
+  display: grid; gap: 8px;
   mix-blend-mode: difference;
   opacity: 0; transform: translateY(10px);
   transition: opacity .5s var(--ease), transform .5s var(--ease);
@@ -578,15 +578,22 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 .figindex.is-visible { opacity: 1; transform: none; pointer-events: auto; }
 .fi-item {
-  /* colonna fissa, un po' più larga di "FIG. 15-27" attivo (~88px): niente a capo, etichette sempre allineate */
-  display: grid; grid-template-columns: 96px auto; gap: 12px;
+  /* colonna fissa, un po' più larga di "FIG. 15-27" attivo (~104px): niente a capo, etichette sempre allineate */
+  display: grid; grid-template-columns: 118px auto; gap: 14px;
   white-space: nowrap;
-  font-family: var(--f-display); font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  font-family: var(--f-display); font-size: 13.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
   color: #8f959a;
   transition: color .3s, font-size .3s var(--ease);
 }
 .fi-item:hover { color: #fff; }
-.fi-item.is-active { color: #fff; font-size: 15px; font-weight: 700; }
+.fi-item.is-active { color: #fff; font-size: 17.5px; font-weight: 700; }
+
+/* desktop: fuori dall'header la navigazione passa all'indice qui sopra, il menu in alto sparisce
+   (stessa soglia a cui l'indice viene nascosto; sotto, il menu in alto resta sempre) */
+@media (min-width: 1101px) {
+  .pillnav { transition: opacity .4s var(--ease), transform .4s var(--ease); }
+  .topbar.is-scrolled .pillnav { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+}
 
 /* ---------- footer ---------- */
 .footer {
@@ -607,9 +614,17 @@ ul { list-style: none; margin: 0; padding: 0; }
   .figindex { display: none; }
 }
 
-@media (max-width: 820px) {
-  .topbar { grid-template-columns: 1fr; justify-items: center; padding-top: 16px; }
+@media (max-width: 1240px) {
+  /* logo + menu + social non stanno più su una riga: resta solo il menu, centrato */
+  .topbar { grid-template-columns: 1fr; justify-items: center; padding: 16px 12px; }
   .logo, .socials { display: none; }
+  /* se le voci non entrano, la barra scorre in orizzontale (scrollbar nascosta) */
+  .pillnav { max-width: 100%; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
+  .pillnav::-webkit-scrollbar { display: none; }
+  .pill { white-space: nowrap; flex-shrink: 0; }
+}
+
+@media (max-width: 820px) {
   .pill { padding: 10px 16px; font-size: 11px; }
 
   .work { padding: 110px 16px 110px; }

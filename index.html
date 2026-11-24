@@ -542,6 +542,13 @@
 
       const setActive = (id) => {
         navLinks.forEach((a) => a.classList.toggle('is-active', a.dataset.covers.split(' ').includes(id)));
+        // su schermi stretti la barra scorre: porta al centro la voce attiva
+        const nav = $('#nav');
+        const on = navLinks.find((a) => a.classList.contains('is-active'));
+        if (on && nav.scrollWidth > nav.clientWidth) {
+          const r = on.getBoundingClientRect(), n = nav.getBoundingClientRect();
+          nav.scrollLeft += (r.left + r.width / 2) - (n.left + n.width / 2);
+        }
         fiLinks.forEach((a) => a.classList.toggle('is-active', a.dataset.target === id));
         topbar.classList.toggle('is-scrolled', id !== 'home');
         fi.classList.toggle('is-visible', id !== 'home');

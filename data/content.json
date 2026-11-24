@@ -14,9 +14,12 @@
 
   "nav": [
     { "label": "Home", "href": "#home", "covers": ["home"] },
-    { "label": "Lavori", "href": "#esperienza", "covers": ["esperienza", "percorso", "progetti", "competenze"] },
+    { "label": "WebOps", "href": "#esperienza", "covers": ["esperienza"] },
+    { "label": "Percorso", "href": "#percorso", "covers": ["percorso"] },
     { "label": "Formazione", "href": "#formazione", "covers": ["formazione"] },
-    { "label": "Contatti", "href": "#contatti", "covers": ["contatti"] }
+    { "label": "WebQA", "href": "#progetti", "covers": ["progetti"] },
+    { "label": "Toolkit", "href": "#competenze", "covers": ["competenze"] },
+    { "label": "Parliamo", "href": "#contatti", "covers": ["contatti"] }
   ],
 
   "socials": [
@@ -45,7 +48,7 @@
   "sections": [
     {
       "id": "esperienza",
-      "indexLabel": "Esperienza",
+      "indexLabel": "WebOps",
       "title": "Web",
       "titleFaded": "Ops",
       "layout": "scatter",
@@ -184,7 +187,7 @@
     },
     {
       "id": "progetti",
-      "indexLabel": "Progetti",
+      "indexLabel": "WebQA",
       "title": "Web",
       "titleFaded": "QA",
       "layout": "scatter",
@@ -231,7 +234,7 @@
     },
     {
       "id": "competenze",
-      "indexLabel": "Competenze",
+      "indexLabel": "Toolkit",
       "title": "Tool",
       "titleFaded": "kit",
       "layout": "cluster",
@@ -255,7 +258,7 @@
 
   "contact": {
     "id": "contatti",
-    "indexLabel": "Contatti",
+    "indexLabel": "Parliamo",
     "title": "Parliamo",
     "titleFaded": ".",
     "text": "Ti serve un sito per la tua attività? Lavoro da remoto da Voghera (PV): scrivimi.",
