@@ -32,7 +32,7 @@ data/content.json   → TUTTI i contenuti (testi, date, esperienze, competenze, 
 | `ui` | etichette di interfaccia (`figPrefix`, `scrollHint`, …) |
 | `nav[]` | `label`, `href`, `covers[]` (id delle sezioni che attivano la voce) |
 | `socials[]` | `label`, `url` |
-| `hero` | `name`, `bubble` (fumetto giallo), `dots[]` ("unisci i puntini": `letter` = indice del carattere in `name`, da 0, spazi inclusi; `from` / `to` = numeri ai due capi del tratto mancante), `tags[]` con `text` e `tone` (`accent` \| `dark` \| `muted`) |
+| `hero` | `name`, `bubble` (fumetto giallo), `bubbleSad` (testo mostrato per ~1 s dopo il click sulla ×, prima che il fumetto sparisca), `dots[]` ("unisci i puntini": `letter` = indice del carattere in `name`, da 0, spazi inclusi; `from` / `to` = numeri ai due capi del tratto mancante), `tags[]` con `text` e `tone` (`accent` \| `dark` \| `muted`) |
 | `sections[]` | `id`, `indexLabel`, `title`, `titleFaded`, `layout` (`scatter` \| `cluster`), `cta` opzionale (`label`, `href`, `tone`: `violet` \| `cyan`), `figures[]` |
 | `contact` | `id`, `indexLabel`, `title`, `titleFaded`, `text`, `email`, `cta` |
 | `footer` | `text` |
@@ -44,7 +44,7 @@ I numeri "FIG. n" e l'indice in basso a sinistra sono calcolati automaticamente.
 | type | campi |
 |---|---|
 | `window` | `url`, `eyebrow`, `title`, `subtitle`, `body`, `meta[]` (`label`, `value`) |
-| `stat` | `value`, `label`, `note` |
+| `stat` | `value`, `label`, `note`, `items[]` opzionale (etichette: stringa, oppure `{ "text", "href" }` per renderla un link esterno con freccia ↗), `disclaimer` opzionale (nota in piccolo sotto le etichette) |
 | `checklist` | `title`, `items[]` (`text`, `checked`) |
 | `ticket` | `key`, `title`, `status`, `tags[]`, `footer` |
 | `terminal` | `title`, `lines[]` (`text`, `tone`: `cmd` \| `dim` \| `ok` \| `warn` \| `err`) |

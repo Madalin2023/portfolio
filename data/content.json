@@ -27,6 +27,7 @@
   "hero": {
     "name": "Madalin Luciu",
     "bubble": "Ciao! :)",
+    "bubbleSad": "Ciao! :(",
     "dots": [
       { "letter": 0, "from": "2", "to": "3" },
       { "letter": 4, "from": "0", "to": "8" },
@@ -67,7 +68,21 @@
           "type": "stat",
           "value": "10+",
           "label": "brand automotive europei",
-          "note": "gestiti in AEM"
+          "note": "gestiti in AEM",
+          "items": [
+            { "text": "Alfa Romeo", "href": "https://www.alfaromeo.it/mopar" },
+            { "text": "Peugeot", "href": "https://www.peugeot.it/post-vendita-e-servizi/servizio-cambio-olio.html" },
+            { "text": "Jeep", "href": "https://www.jeep-official.it/clienti/servizi-jeep" },
+            { "text": "Opel", "href": "https://www.opel.it/post-vendita/servizio-cambio-olio.html" },
+            { "text": "Fiat", "href": "https://www.fiat.it/clienti/garanzia-qualita-fiat/ultime-offerte" },
+            { "text": "Citroen", "href": "https://www.citroen.it/post-vendita/servizio-cambio-olio.html" },
+            { "text": "Abarth", "href": "https://www.abarth.it/mopar/e-service" },
+            { "text": "DS Automobiles", "href": "https://www.dsautomobiles.it/la-tua-auto-ds/servizio-cambio-olio.html" },
+            { "text": "Lancia", "href": "https://www.lancia.it/clienti/e-service" },
+            { "text": "Fiat Professional", "href": "https://www.fiat.it/professional/clienti/offerte-esclusive" },
+            { "text": "Vauxhall", "href": "https://www.vauxhall.co.uk/owners/offers.html" }
+          ],
+          "disclaimer": "Link a pagine pubbliche che ho realizzato, inseriti a solo scopo dimostrativo. Nessuna finalità pubblicitaria né affiliazione; i marchi appartengono ai rispettivi proprietari."
         },
         {
           "type": "checklist",

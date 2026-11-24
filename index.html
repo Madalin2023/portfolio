@@ -127,6 +127,18 @@
         const card = el('div', 'card card-stat');
         card.append(el('div', 'stat-value', f.value), el('div', 'stat-label', f.label));
         if (f.note) card.append(el('div', 'stat-note', f.note));
+        if (Array.isArray(f.items) && f.items.length) {
+          const list = el('ul', 'stat-items');
+          // ogni voce può essere un testo o { text, href } (link esterno, nuova scheda)
+          f.items.forEach((t) => {
+            const li = el('li');
+            if (t && typeof t === 'object' && t.href) li.append(link(t.href, 'stat-link', t.text));
+            else li.append(el('span', '', typeof t === 'object' ? t?.text : t));
+            list.append(li);
+          });
+          card.append(list);
+        }
+        if (f.disclaimer) card.append(el('p', 'stat-disclaimer', f.disclaimer));
         return card;
       },
       checklist(f) {
@@ -237,11 +249,19 @@
       const tl = $('#tagline');
       if (h.bubble) {
         const b = el('div', 'bubble');
-        b.append(el('span', '', h.bubble));
+        const msg = el('span', '', h.bubble);
+        b.append(msg);
         const x = el('button', 'bubble-x', '×');
         x.type = 'button';
         x.setAttribute('aria-label', 'Chiudi');
-        x.addEventListener('click', () => b.classList.add('is-gone'));
+        // al click la faccina diventa triste, resta un attimo e poi la nuvoletta sparisce
+        x.addEventListener('click', () => {
+          if (b.classList.contains('is-sad') || b.classList.contains('is-gone')) return;
+          if (!h.bubbleSad) { b.classList.add('is-gone'); return; }
+          msg.textContent = h.bubbleSad;
+          b.classList.add('is-sad');
+          setTimeout(() => b.classList.add('is-gone'), 1100);
+        }, { once: true });
         b.append(x);
         tl.append(b);
       }
