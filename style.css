@@ -524,10 +524,11 @@ ul { list-style: none; margin: 0; padding: 0; }
   transition: background .3s, transform .4s var(--ease);
 }
 .fig:hover .skill-initial { background: var(--accent); transform: rotate(-8deg); }
-/* con il logo a colori: riquadro chiaro, al passaggio solo rotazione (il rosso coprirebbe i colori) */
-.skill-initial.has-icon { background: #fff; box-shadow: inset 0 0 0 1px var(--card-line); }
-.fig:hover .skill-initial.has-icon { background: #fff; box-shadow: inset 0 0 0 1px var(--card-line), 0 6px 14px rgba(0, 0, 0, .12); }
-.skill-icon { width: 28px; height: 28px; display: block; object-fit: contain; }
+/* con il logo a colori: riquadro grigio tenue fisso; al passaggio il logo si ingrandisce appena e sale */
+.skill-initial.has-icon { background: #f1f2f4; }
+.fig:hover .skill-initial.has-icon { background: #f1f2f4; transform: none; }
+.skill-icon { width: 28px; height: 28px; display: block; object-fit: contain; transition: transform .35s var(--ease); }
+.fig:hover .skill-icon { transform: translateY(-2px) scale(1.1); }
 .skill-name { font-family: var(--f-display); font-size: 17px; font-weight: 700; line-height: 1.2; }
 .skill-cat { font-family: var(--f-mono); font-size: 11px; color: #7a818a; margin-top: 4px; letter-spacing: .04em; }
 .skill-bar { grid-column: 1 / -1; height: 4px; background: var(--card-line); border-radius: 4px; overflow: hidden; }
@@ -552,7 +553,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .contact-inner.is-in { opacity: 1; transform: none; }
 .contact-title {
   font-family: var(--f-body); font-weight: 500;
-  font-size: clamp(64px, 12vw, 168px); letter-spacing: -.04em; line-height: .9; color: var(--ink);
+  font-size: clamp(64px, 12vw, 168px); letter-spacing: -.04em; line-height: .9; color: var(--neon);
 }
 .contact-text { font-family: var(--f-mono); font-size: clamp(15px, 1.6vw, 18px); line-height: 1.6; color: var(--ink-dim); max-width: 560px; }
 .contact .cta { grid-column: auto; justify-self: center; }
