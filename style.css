@@ -555,6 +555,7 @@ ul { list-style: none; margin: 0; padding: 0; }
   font-family: var(--f-body); font-weight: 500;
   font-size: clamp(64px, 12vw, 168px); letter-spacing: -.04em; line-height: .9; color: var(--neon);
 }
+.contact-title .faded { color: var(--neon); }
 .contact-text { font-family: var(--f-mono); font-size: clamp(15px, 1.6vw, 18px); line-height: 1.6; color: var(--ink-dim); max-width: 560px; }
 .contact .cta { grid-column: auto; justify-self: center; }
 .contact-mail { font-family: var(--f-mono); font-size: 14px; color: var(--ink); border-bottom: 1px solid currentColor; padding-bottom: 2px; transition: opacity .25s; }

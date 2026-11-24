@@ -188,7 +188,7 @@
       "title": "Web",
       "titleFaded": "QA",
       "layout": "scatter",
-      "cta": { "label": "Vedi GitHub", "href": "https://github.com/", "tone": "cyan" },
+      "cta": { "label": "Vedi GitHub", "href": "https://github.com/", "tone": "violet" },
       "figures": [
         {
           "type": "terminal",
