@@ -236,19 +236,19 @@
       "titleFaded": "kit",
       "layout": "cluster",
       "figures": [
-        { "type": "skill", "name": "Adobe Experience Manager", "category": "CMS · Ottimo", "level": 90 },
-        { "type": "skill", "name": "Jira", "category": "Gestione progetti · Ottimo", "level": 90 },
-        { "type": "skill", "name": "HTML + CSS", "category": "Frontend · Ottimo", "level": 90 },
-        { "type": "skill", "name": "Bootstrap", "category": "Framework CSS · Ottimo", "level": 90 },
-        { "type": "skill", "name": "JavaScript", "category": "Frontend · Molto buono", "level": 80 },
-        { "type": "skill", "name": "PHP", "category": "Backend · Molto buono", "level": 80 },
-        { "type": "skill", "name": "Laravel", "category": "Framework PHP · Molto buono", "level": 80 },
-        { "type": "skill", "name": "Gestione database", "category": "MySQL · Buono", "level": 65 },
-        { "type": "skill", "name": "Python", "category": "Scripting · in crescita con CS50P", "level": 55 },
-        { "type": "skill", "name": "React", "category": "Frontend · Base", "level": 40 },
-        { "type": "skill", "name": "Java", "category": "Programmazione · Base", "level": 40 },
-        { "type": "skill", "name": "Programmazione in C", "category": "Programmazione · Base", "level": 40 },
-        { "type": "skill", "name": "Arduino", "category": "Elettronica · Base", "level": 40 }
+        { "type": "skill", "name": "Adobe Experience Manager", "category": "CMS", "icon": "icons/aem.svg", "level": 90 },
+        { "type": "skill", "name": "Claude", "category": "Assistente AI", "icon": "icons/claude.svg", "level": 90 },
+        { "type": "skill", "name": "Laravel", "category": "Framework PHP", "icon": "icons/laravel.svg", "level": 90 },
+        { "type": "skill", "name": "PHP", "category": "Backend", "icon": "icons/php.svg", "level": 90 },
+        { "type": "skill", "name": "HTML + CSS", "category": "Frontend", "icon": "icons/html5.svg", "level": 90 },
+        { "type": "skill", "name": "JavaScript", "category": "Frontend", "icon": "icons/javascript.svg", "level": 90 },
+        { "type": "skill", "name": "Python", "category": "Scripting", "icon": "icons/python.svg", "level": 90 },
+        { "type": "skill", "name": "React", "category": "Frontend", "icon": "icons/react.svg", "level": 90 },
+        { "type": "skill", "name": "Gestione database", "category": "MySQL", "icon": "icons/mysql.svg", "level": 90 },
+        { "type": "skill", "name": "Jira", "category": "Gestione progetti", "icon": "icons/jira.svg", "level": 90 },
+        { "type": "skill", "name": "Bootstrap", "category": "Framework CSS", "icon": "icons/bootstrap.svg", "level": 90 },
+        { "type": "skill", "name": "Programmazione in C", "category": "Programmazione", "icon": "icons/c.svg", "level": 90 },
+        { "type": "skill", "name": "Arduino", "category": "Elettronica", "icon": "icons/arduino.svg", "level": 90 }
       ]
     }
   ],

@@ -524,6 +524,10 @@ ul { list-style: none; margin: 0; padding: 0; }
   transition: background .3s, transform .4s var(--ease);
 }
 .fig:hover .skill-initial { background: var(--accent); transform: rotate(-8deg); }
+/* con il logo a colori: riquadro chiaro, al passaggio solo rotazione (il rosso coprirebbe i colori) */
+.skill-initial.has-icon { background: #fff; box-shadow: inset 0 0 0 1px var(--card-line); }
+.fig:hover .skill-initial.has-icon { background: #fff; box-shadow: inset 0 0 0 1px var(--card-line), 0 6px 14px rgba(0, 0, 0, .12); }
+.skill-icon { width: 28px; height: 28px; display: block; object-fit: contain; }
 .skill-name { font-family: var(--f-display); font-size: 17px; font-weight: 700; line-height: 1.2; }
 .skill-cat { font-family: var(--f-mono); font-size: 11px; color: #7a818a; margin-top: 4px; letter-spacing: .04em; }
 .skill-bar { grid-column: 1 / -1; height: 4px; background: var(--card-line); border-radius: 4px; overflow: hidden; }

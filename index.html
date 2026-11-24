@@ -196,7 +196,19 @@
       },
       skill(f) {
         const card = el('div', 'card card-skill');
-        card.append(el('div', 'skill-initial', (f.name || '?').trim().charAt(0)));
+        // logo del servizio con i suoi colori; senza icona, l'iniziale del nome
+        const badge = el('div', 'skill-initial');
+        if (f.icon) {
+          badge.classList.add('has-icon');
+          const ic = el('img', 'skill-icon');
+          ic.src = f.icon;
+          ic.alt = '';
+          ic.loading = 'lazy';
+          badge.append(ic);
+        } else {
+          badge.textContent = (f.name || '?').trim().charAt(0);
+        }
+        card.append(badge);
         const txt = el('div', 'skill-txt');
         txt.append(el('h3', 'skill-name', f.name));
         if (f.category) txt.append(el('p', 'skill-cat', f.category));

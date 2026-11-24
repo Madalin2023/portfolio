@@ -8,6 +8,7 @@ Sito portfolio statico (nessun build step, nessuna dipendenza). Stile: scuro ad 
 index.html          → solo struttura + logica di rendering (JS inline)
 style.css           → solo presentazione
 data/content.json   → TUTTI i contenuti (testi, date, esperienze, competenze, link)
+icons/*.svg         → loghi a colori delle competenze (Devicon, MIT; AEM da Simple Icons, CC0)
 ```
 
 `index.html` carica i contenuti con `fetch('./data/content.json')` e genera il DOM.
@@ -50,7 +51,7 @@ I numeri "FIG. n" e l'indice in basso a sinistra sono calcolati automaticamente.
 | `terminal` | `title`, `lines[]` (`text`, `tone`: `cmd` \| `dim` \| `ok` \| `warn` \| `err`) |
 | `project` | `eyebrow`, `title`, `body`, `tags[]`, `link` opzionale (`label`, `href`) |
 | `report` | `title`, `rows[]` (`label`, `status`: `ok` \| `warn` \| `err`) |
-| `skill` | `name`, `category`, `level` (0–100) |
+| `skill` | `name`, `category`, `icon` opzionale (percorso SVG in `icons/`, altrimenti iniziale del nome), `level` (0–100) |
 
 Il layout `scatter` è pensato per gruppi di 4 figure; `cluster` per griglie di skill.
 Un `type` sconosciuto viene saltato con un `console.warn`.
