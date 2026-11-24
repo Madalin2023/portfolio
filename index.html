@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
   <!--
     STRUTTURA SOLTANTO. Tutti i testi vivono in data/content.json.
     Vedi CLAUDE.md prima di modificare questo file.
@@ -509,6 +510,80 @@
         console.error('Impossibile caricare data/content.json:', err);
         $('#loadError').hidden = false;
       });
+  })();
+  </script>
+  <script>
+  /* Sfondo stellato: livello fisso, indipendente dai contenuti */
+  (() => {
+    'use strict';
+    const cv = document.getElementById('stars');
+    const ctx = cv.getContext('2d');
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let w = 0, h = 0, stars = [], shooting = null, nextShoot = 3000;
+
+    function build() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth; h = window.innerHeight;
+      cv.width = w * dpr; cv.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = Math.round((w * h) / 2600);
+      stars = Array.from({ length: count }, () => {
+        const big = Math.random() < 0.08;
+        const t = Math.random();
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: big ? 1 + Math.random() * 0.9 : 0.3 + Math.random() * 0.7,
+          a: 0.35 + Math.random() * 0.65,
+          speed: 0.4 + Math.random() * 1.6,
+          phase: Math.random() * Math.PI * 2,
+          tint: t < 0.15 ? '200,220,255' : t < 0.2 ? '255,230,200' : '255,255,255'
+        };
+      });
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      const s = t / 1000;
+      for (const st of stars) {
+        const tw = still ? 1 : 0.55 + 0.45 * Math.sin(s * st.speed + st.phase);
+        ctx.fillStyle = 'rgba(' + st.tint + ',' + (st.a * tw).toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+        ctx.fill();
+        if (st.r > 1.2) {           /* alone per le stelle più grandi */
+          ctx.fillStyle = 'rgba(' + st.tint + ',' + (st.a * tw * 0.12).toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.arc(st.x, st.y, st.r * 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      if (still) return;
+      if (!shooting && t > nextShoot) {
+        shooting = { x: w * (0.3 + Math.random() * 0.7), y: Math.random() * h * 0.4, vx: -(6 + Math.random() * 4), vy: 3 + Math.random() * 2, life: 0 };
+      }
+      if (shooting) {             /* stella cadente occasionale */
+        const sh = shooting;
+        sh.x += sh.vx; sh.y += sh.vy; sh.life += 1;
+        const fade = Math.max(0, 1 - sh.life / 60);
+        const tx = sh.x - sh.vx * 14, ty = sh.y - sh.vy * 14;
+        const g = ctx.createLinearGradient(sh.x, sh.y, tx, ty);
+        g.addColorStop(0, 'rgba(255,255,255,' + (0.85 * fade).toFixed(3) + ')');
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.strokeStyle = g; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(sh.x, sh.y); ctx.lineTo(tx, ty); ctx.stroke();
+        if (fade <= 0) { shooting = null; nextShoot = t + 6000 + Math.random() * 9000; }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    build();
+    let rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => { build(); if (still) draw(0); }, 150);
+    });
+    if (still) draw(0); else requestAnimationFrame(draw);
   })();
   </script>
 </body>
