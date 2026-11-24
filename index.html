@@ -37,9 +37,20 @@
               <feGaussianBlur in="d" stdDeviation="0.9" result="db"/>
               <feComponentTransfer in="db"><feFuncA type="linear" slope="1.8"/></feComponentTransfer>
             </filter>
+            <!-- stesso spostamento della matita, senza sfocatura: tiene i puntini sulla linea -->
+            <filter id="pencilShift" x="-5%" y="-10%" width="110%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="1" seed="4" result="n"/>
+              <feGaussianBlur in="n" stdDeviation="3" result="ns"/>
+              <feDisplacementMap in="SourceGraphic" in2="ns" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <!-- tratti mancanti del "unisci i puntini" -->
+            <mask id="heroGaps" maskUnits="userSpaceOnUse">
+              <rect id="heroGapsBg" fill="#fff"/>
+              <g id="heroGapHoles" stroke="#000" stroke-width="18" stroke-linecap="round"></g>
+            </mask>
           </defs>
+          <text id="heroNameText" x="0" y="0" mask="url(#heroGaps)"></text>
           <g class="hero-dots" id="heroDots"></g>
-          <text id="heroNameText" x="0" y="0"></text>
         </svg>
         <div class="tagline" id="tagline"></div>
       </div>
@@ -214,6 +225,7 @@
       $('#heroNameTitle').textContent = h.name || '';
       const nameText = $('#heroNameText');
       nameText.textContent = h.name || '';
+      dotSpecs = Array.isArray(h.dots) ? h.dots : [];
       // lettere leggermente ruotate e sfalsate, come scritte a mano
       let sd = 11;
       const jit = () => (sd = (sd * 9301 + 49297) % 233280) / 233280 - 0.5;
@@ -250,22 +262,124 @@
       const pad = 24;
       svg.setAttribute('viewBox', `${bb.x - pad} ${bb.y - pad} ${bb.width + pad * 2} ${bb.height + pad * 2}`);
 
-      // small numbered "construction" dots scattered over the name
-      const g = $('#heroDots');
-      g.replaceChildren();
-      let seed = 7;
-      const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-      for (let i = 1; i <= 12; i++) {
-        const x = bb.x + bb.width * (0.04 + rnd() * 0.92);
-        const y = bb.y + bb.height * (0.25 + rnd() * 0.55);
-        const dot = svgEl('g', { class: 'dot', style: `--d:${i}` });
-        dot.append(svgEl('circle', { cx: x, cy: y, r: 2.6 }));
-        const lbl = svgEl('text', { x: x - 6, y: y - 7, 'text-anchor': 'end' });
-        lbl.textContent = i;
-        dot.append(lbl);
-        g.append(dot);
-      }
+      if (!dotsBuilt) { buildConnectDots(text, bb, pad); dotsBuilt = true; }
       svg.classList.add('is-ready');
+    }
+
+    // "Unisci i puntini": su alcune lettere (hero.dots nel JSON) un tratto del contorno
+    // manca, e ai suoi capi ci sono due puntini numerati da collegare.
+    let dotsBuilt = false;
+    let dotSpecs = [];
+    function buildConnectDots(text, bb, pad) {
+      const GAP = 46;          // lunghezza del tratto mancante (unità del viewBox)
+      const ox = bb.x - pad, oy = bb.y - pad;
+      const W = Math.ceil(bb.width + pad * 2), H = Math.ceil(bb.height + pad * 2);
+      const canvas = () => {
+        const c = document.createElement('canvas');
+        c.width = W; c.height = H;
+        const x = c.getContext('2d', { willReadFrequently: true });
+        const cs = getComputedStyle(text);
+        x.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        x.lineJoin = 'round';
+        return x;
+      };
+      const reader = (data) => (x, y) => {
+        x = Math.round(x); y = Math.round(y);
+        return x >= 0 && y >= 0 && x < W && y < H && data[(y * W + x) * 4 + 3] > 100;
+      };
+      const drawChar = (c, i) => {
+        const p = text.getStartPositionOfChar(i);
+        c.save();
+        c.translate(p.x - ox, p.y - oy);
+        c.rotate(text.getRotationOfChar(i) * Math.PI / 180);
+        c.strokeText(text.textContent[i], 0, 0);
+        c.restore();
+      };
+
+      // tutte le lettere, linea spessa: serve a tenere i numeri lontani dalle linee
+      const ink = canvas();
+      ink.lineWidth = 14;
+      for (let i = 0; i < text.textContent.length; i++) if (text.textContent[i].trim()) drawChar(ink, i);
+      const onInk = reader(ink.getImageData(0, 0, W, H).data);
+      const inkAround = (x, y, r) => {
+        let c = 0;
+        for (let dy = -r; dy <= r; dy += 2) for (let dx = -r; dx <= r; dx += 2) if (onInk(x + dx, y + dy)) c++;
+        return c;
+      };
+
+      const holes = $('#heroGapHoles');
+      const dots = $('#heroDots');
+      holes.replaceChildren();
+      dots.replaceChildren();
+      // area della maschera esplicita (il default taglierebbe la scritta), con margine per l'effetto matita
+      const area = { x: ox - 40, y: oy - 40, width: W + 80, height: H + 80 };
+      for (const node of [$('#heroGaps'), $('#heroGapsBg')]) {
+        for (const k in area) node.setAttribute(k, area[k]);
+      }
+
+      const one = canvas();     // una lettera alla volta, linea sottile
+      one.lineWidth = 2;
+      let n = 0;
+      dotSpecs.forEach((spec) => {
+        const i = spec.letter;
+        if (!(i >= 0 && i < text.textContent.length) || !text.textContent[i].trim()) {
+          console.warn('hero.dots: lettera non valida', spec);
+          return;
+        }
+        one.clearRect(0, 0, W, H);
+        drawChar(one, i);
+        const on = reader(one.getImageData(0, 0, W, H).data);
+        const nearLine = (x, y) => {
+          for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) if (on(x + dx, y + dy)) return true;
+          return false;
+        };
+        const px = [];
+        for (let y = 0; y < H; y += 3) for (let x = 0; x < W; x += 3) if (on(x, y)) px.push([x, y]);
+        // il tratto dritto lungo GAP più in alto nella lettera
+        let best = null;
+        for (let a = 0; a < px.length; a++) for (let b = a + 1; b < px.length; b++) {
+          const A = px[a], B = px[b];
+          const d = Math.hypot(A[0] - B[0], A[1] - B[1]);
+          if (Math.abs(d - GAP) > 3) continue;
+          const my = (A[1] + B[1]) / 2;
+          if (best && my >= best.my) continue;
+          if (![0.2, 0.4, 0.5, 0.6, 0.8].every((t) => nearLine(A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t))) continue;
+          best = { A, B, my };
+        }
+        if (!best) return;
+        // "from" sul capo più a sinistra
+        const [A, B] = best.A[0] <= best.B[0] ? [best.A, best.B] : [best.B, best.A];
+        const mx = (A[0] + B[0]) / 2, my = best.my;
+        // "gomma" lungo il solo tratto tra i due puntini
+        holes.append(svgEl('line', {
+          x1: (A[0] + ox).toFixed(1), y1: (A[1] + oy).toFixed(1),
+          x2: (B[0] + ox).toFixed(1), y2: (B[1] + oy).toFixed(1)
+        }));
+
+        // numero nella direzione più libera attorno al puntino, preferendo l'esterno del tratto
+        const ux = (B[0] - A[0]) / GAP, uy = (B[1] - A[1]) / GAP;
+        [[A, spec.from, -1], [B, spec.to, 1]].forEach(([P, label, dir]) => {
+          n++;
+          const x = P[0] + ox, y = P[1] + oy;
+          let pos = null;
+          for (let k = 0; k < 16; k++) {
+            const a = k * Math.PI / 8, vx = Math.cos(a), vy = Math.sin(a);
+            const lx = P[0] + vx * 16, ly = P[1] + vy * 16;
+            const score = inkAround(lx, ly, 8) * 3 - (vx * ux + vy * uy) * dir * 4;
+            if (!pos || score < pos.score) pos = { score, lx, ly };
+          }
+          const dot = svgEl('g', { class: 'dot', style: `--d:${n}` });
+          dot.append(svgEl('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 2.8 }));
+          const lbl = svgEl('text', {
+            x: (pos.lx + ox).toFixed(1),
+            y: (pos.ly + oy).toFixed(1),
+            'text-anchor': 'middle', 'dominant-baseline': 'central'
+          });
+          lbl.textContent = label ?? '';
+          dot.append(lbl);
+          dots.append(dot);
+        });
+      });
     }
 
     function renderSections(c) {

@@ -27,6 +27,12 @@
   "hero": {
     "name": "Madalin Luciu",
     "bubble": "Ciao! :)",
+    "dots": [
+      { "letter": 0, "from": "2", "to": "3" },
+      { "letter": 4, "from": "0", "to": "8" },
+      { "letter": 8, "from": "0", "to": "2" },
+      { "letter": 12, "from": "0", "to": "0" }
+    ],
     "tags": [
       { "text": "WebOps", "tone": "accent" },
       { "text": "&", "tone": "dark" },

@@ -178,7 +178,8 @@ ul { list-style: none; margin: 0; padding: 0; }
 .hero-name.is-ready #heroNameText { animation: draw 2.6s var(--ease) forwards; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
-.hero-dots .dot { opacity: 0; animation: pop .4s var(--ease) forwards; animation-delay: calc(1.4s + var(--d) * 70ms); }
+.hero-dots { filter: url(#pencilShift); }
+.hero-dots .dot { opacity: 0; animation: pop .4s var(--ease) forwards; animation-delay: calc(1.6s + var(--d) * 120ms); }
 .hero-dots circle { fill: var(--ink); }
 .hero-dots text { font-family: var(--f-mono); font-size: 13px; fill: var(--ink-dim); }
 @keyframes pop { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -211,7 +212,8 @@ ul { list-style: none; margin: 0; padding: 0; }
   animation: bubble-in .6s var(--ease) 2.2s both;
   transition: transform .35s var(--ease), opacity .35s;
 }
-.bubble.is-gone { transform: scale(.6) translateY(10px); opacity: 0; pointer-events: none; }
+/* uscita via animazione: bubble-in (fill "both") altrimenti terrebbe opacity/transform bloccati */
+.bubble.is-gone { animation: bubble-out .35s var(--ease) both; pointer-events: none; }
 .bubble-x {
   border: 0; background: none; padding: 0; cursor: pointer;
   font: inherit; font-size: 1.3em; line-height: 1; color: inherit;
@@ -219,6 +221,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 .bubble-x:hover { transform: rotate(90deg); }
 @keyframes bubble-in { from { opacity: 0; transform: scale(.5) rotate(-6deg); } to { opacity: 1; transform: none; } }
+@keyframes bubble-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: scale(.6) translateY(10px); } }
 
 .marquee {
   position: absolute; left: 50%; bottom: 60px;
