@@ -8,6 +8,7 @@ Sito portfolio statico (nessun build step, nessuna dipendenza). Stile: scuro ad 
 index.html          → solo struttura + logica di rendering (JS inline)
 style.css           → solo presentazione
 data/content.json   → TUTTI i contenuti (testi, date, esperienze, competenze, link)
+favicon.svg         → icona della tab (M scura con ombra rossa accent su fondo giallo fluo)
 icons/*.svg         → loghi a colori delle competenze (Devicon, MIT; AEM da Simple Icons, CC0)
 ```
 
