@@ -23,8 +23,8 @@
   ],
 
   "socials": [
-    { "label": "GitHub", "url": "https://github.com/" },
-    { "label": "LinkedIn", "url": "https://www.linkedin.com/" }
+    { "label": "GitHub", "url": "https://github.com/Madalin2023" },
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/madalin2023/" }
   ],
 
   "hero": {
@@ -191,7 +191,7 @@
       "title": "Web",
       "titleFaded": "QA",
       "layout": "scatter",
-      "cta": { "label": "Vedi GitHub", "href": "https://github.com/", "tone": "violet" },
+      "cta": { "label": "Vedi GitHub", "href": "https://github.com/Madalin2023", "tone": "violet" },
       "figures": [
         {
           "type": "terminal",
